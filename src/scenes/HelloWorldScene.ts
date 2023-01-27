@@ -2,6 +2,8 @@ import Phaser from 'phaser'
 
 export default class HelloWorldScene extends Phaser.Scene
 {
+    private player?: Phaser.Physics.Arcade.Sprite
+
 	constructor()
 	{
 		super('hello-world')
@@ -9,31 +11,27 @@ export default class HelloWorldScene extends Phaser.Scene
 
 	preload()
     {
-        this.load.setBaseURL('http://labs.phaser.io')
-
-        this.load.image('sky', 'assets/skies/space3.png')
-        this.load.image('logo', 'assets/sprites/phaser3-logo.png')
-        this.load.image('red', 'assets/particles/red.png')
+        this.load.image('background', 'assets/Background.png')
+        this.load.spritesheet('character', 'assets/spritesheets/Elementals_leaf_ranger_288x128_SpriteSheet.png', {
+            frameWidth: 64, frameHeight: 128
+        })
     }
 
     create()
     {
-        this.add.image(400, 300, 'sky')
+        this.add.image(400, 300, 'background')
 
-        const particles = this.add.particles('red')
+        this.player = this.physics.add.sprite(200, 450, 'character')
+        this.player.setBounce(0.2)
+        this.player.setCollideWorldBounds(true)
 
-        const emitter = particles.createEmitter({
-            speed: 100,
-            scale: { start: 1, end: 0 },
-            blendMode: 'ADD'
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('character', {
+                start: 0, end: 6
+            }),
+            frameRate: 10,
+            repeat: -1
         })
-
-        const logo = this.physics.add.image(400, 100, 'logo')
-
-        logo.setVelocity(100, 200)
-        logo.setBounce(1, 1)
-        logo.setCollideWorldBounds(true)
-
-        emitter.startFollow(logo)
     }
 }
